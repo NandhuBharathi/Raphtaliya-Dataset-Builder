@@ -14,7 +14,7 @@ class DatasetUploader:
     def upload(
         self,
         dataset_name,
-        folder_path,
+        folder_path="processed",
         private=False
     ):
 
@@ -24,11 +24,8 @@ class DatasetUploader:
 
             if not folder_path.exists():
 
-                raise FileNotFoundError(
-                    folder_path
-                )
+                raise FileNotFoundError(folder_path)
 
-            # Get username automatically
             username = self.api.whoami(
                 token=self.token
             )["name"]
@@ -37,24 +34,31 @@ class DatasetUploader:
                 f"{username}/{dataset_name}"
             )
 
-            # Create dataset repository
             self.api.create_repo(
 
                 repo_id=repo_id,
+
                 repo_type="dataset",
+
                 token=self.token,
+
                 private=private,
+
                 exist_ok=True
 
             )
 
-            # Upload processed folder
             self.api.upload_folder(
 
                 repo_id=repo_id,
+
                 repo_type="dataset",
+
                 folder_path=str(folder_path),
-                token=self.token
+
+                token=self.token,
+
+                commit_message="Upload dataset"
 
             )
 

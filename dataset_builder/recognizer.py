@@ -36,7 +36,7 @@ class DatasetRecognizer:
 
         self.dataset = dataset
 
-    def detect(self):
+    def classify(self):
 
         try:
 
@@ -72,7 +72,6 @@ class DatasetRecognizer:
 
     def _recognize(self):
 
-        # DataFrame
         if isinstance(self.dataset, pd.DataFrame):
 
             keys = {
@@ -85,7 +84,6 @@ class DatasetRecognizer:
                 default="table"
             )
 
-        # List
         elif isinstance(self.dataset, list):
 
             if len(self.dataset) == 0:
@@ -108,7 +106,6 @@ class DatasetRecognizer:
 
             return "list"
 
-        # Dictionary
         elif isinstance(self.dataset, dict):
 
             keys = {
@@ -121,7 +118,6 @@ class DatasetRecognizer:
                 default="dictionary"
             )
 
-        # Text
         elif isinstance(self.dataset, str):
 
             return "document"
@@ -141,24 +137,3 @@ class DatasetRecognizer:
                 return schema
 
         return default
-
-
-if __name__ == "__main__":
-
-    dataframe = pd.DataFrame({
-
-        "question": [
-            "What is AI?"
-        ],
-
-        "answer": [
-            "Artificial Intelligence"
-        ]
-
-    })
-
-    recognizer = DatasetRecognizer(
-        dataframe
-    )
-
-    recognizer.detect()

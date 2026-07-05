@@ -1,109 +1,127 @@
 
-from pathlib import Path
 import json
-
-import pandas as pd
+from pathlib import Path
 
 
 class DatasetSaver:
 
-    def __init__(self, dataset):
+    def __init__(
+        self,
+        dataset,
+        metadata=None,
+        statistics=None
+    ):
 
         self.dataset = dataset
+        self.metadata = metadata
+        self.statistics = statistics
 
-    def save(self, output_path):
+    def save(self, output_dir="processed"):
 
         try:
 
-            if self.dataset is None:
+            output_dir = Path(output_dir)
 
-                print("=" * 60)
-                print("Dataset Save Failed")
-                print("=" * 60)
-                print("Dataset is None")
-                print("=" * 60)
-
-                return None
-
-            output_path = Path(output_path)
-
-            output_path.parent.mkdir(
+            output_dir.mkdir(
                 parents=True,
                 exist_ok=True
             )
 
-            extension = output_path.suffix.lower()
+            # ----------------------------
+            # Train Dataset
+            # ----------------------------
 
-            # JSON
-            if extension == ".json":
+            train_file = output_dir / "train.json"
+
+            with open(
+                train_file,
+                "w",
+                encoding="utf-8"
+            ) as file:
+
+                json.dump(
+
+                    self.dataset,
+
+                    file,
+
+                    indent=4,
+
+                    ensure_ascii=False
+
+                )
+
+            # ----------------------------
+            # Metadata
+            # ----------------------------
+
+            if self.metadata is not None:
+
+                metadata_file = (
+                    output_dir / "metadata.json"
+                )
 
                 with open(
-                    output_path,
+
+                    metadata_file,
+
                     "w",
+
                     encoding="utf-8"
+
                 ) as file:
 
                     json.dump(
-                        self.dataset,
+
+                        self.metadata,
+
                         file,
+
                         indent=4,
+
                         ensure_ascii=False
+
                     )
 
-            # JSONL
-            elif extension == ".jsonl":
+            # ----------------------------
+            # Statistics
+            # ----------------------------
+
+            if self.statistics is not None:
+
+                statistics_file = (
+                    output_dir / "statistics.json"
+                )
 
                 with open(
-                    output_path,
+
+                    statistics_file,
+
                     "w",
+
                     encoding="utf-8"
+
                 ) as file:
 
-                    for record in self.dataset:
+                    json.dump(
 
-                        file.write(
-                            json.dumps(
-                                record,
-                                ensure_ascii=False
-                            )
-                        )
+                        self.statistics,
 
-                        file.write("\n")
+                        file,
 
-            # CSV
-            elif extension == ".csv":
+                        indent=4,
 
-                pd.DataFrame(
-                    self.dataset
-                ).to_csv(
-                    output_path,
-                    index=False,
-                    encoding="utf-8"
-                )
+                        ensure_ascii=False
 
-            # Parquet
-            elif extension == ".parquet":
-
-                pd.DataFrame(
-                    self.dataset
-                ).to_parquet(
-                    output_path,
-                    index=False
-                )
-
-            else:
-
-                raise ValueError(
-                    f"Unsupported format : {extension}"
-                )
+                    )
 
             print("=" * 60)
             print("Dataset Saved Successfully")
             print("=" * 60)
-            print(f"Path : {output_path}")
+            print(f"Directory : {output_dir}")
             print("=" * 60)
 
-            return output_path
+            return output_dir
 
         except Exception as error:
 
@@ -121,17 +139,65 @@ if __name__ == "__main__":
     dataset = [
 
         {
-            "id": 1,
-            "text": "Raphtaliya"
-        },
 
-        {
-            "id": 2,
-            "text": "Dataset Builder"
+            "messages": [
+
+                {
+
+                    "role": "user",
+
+                    "content": "Hello"
+
+                },
+
+                {
+
+                    "role": "assistant",
+
+                    "content": "வணக்கம்"
+
+                }
+
+            ]
+
         }
 
     ]
 
-    saver = DatasetSaver(dataset)
+    metadata = {
 
-    saver.save("processed/sample.json")
+        "schema": "conversation",
+
+        "languages": [
+
+            "english",
+
+            "tamil"
+
+        ],
+
+        "domains": [
+
+            "general"
+
+        ]
+
+    }
+
+    statistics = {
+
+        "records": 1
+
+    }
+
+    saver = DatasetSaver(
+
+        dataset,
+
+        metadata,
+
+        statistics
+
+    )
+
+    saver.save()

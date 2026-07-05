@@ -1,5 +1,4 @@
 
-from pathlib import Path
 from datetime import datetime
 
 
@@ -9,24 +8,18 @@ class DatasetMetadata:
         self,
         dataset_name,
         source,
-        file_path=None,
-        language="unknown",
-        version="1.0",
-        description="",
-        author="",
-        license="",
-        tags=None
+        schema,
+        languages,
+        domains,
+        file_name
     ):
 
         self.dataset_name = dataset_name
         self.source = source
-        self.file_path = file_path
-        self.language = language
-        self.version = version
-        self.description = description
-        self.author = author
-        self.license = license
-        self.tags = tags or []
+        self.schema = schema
+        self.languages = languages
+        self.domains = domains
+        self.file_name = file_name
 
     def generate(self):
 
@@ -35,32 +28,23 @@ class DatasetMetadata:
             metadata = {
 
                 "dataset_name": self.dataset_name,
+
                 "source": self.source,
-                "language": self.language,
-                "version": self.version,
-                "description": self.description,
-                "author": self.author,
-                "license": self.license,
-                "tags": self.tags,
-                "created_at": datetime.now().isoformat()
+
+                "schema": self.schema,
+
+                "languages": self.languages,
+
+                "domains": self.domains,
+
+                "created_at": datetime.now().isoformat(),
+
+                "file_name": self.file_name
 
             }
 
-            if self.file_path is not None:
-
-                path = Path(self.file_path)
-
-                metadata["file_name"] = path.name
-                metadata["file_extension"] = path.suffix
-
-                if path.exists():
-
-                    metadata["file_size_bytes"] = (
-                        path.stat().st_size
-                    )
-
             print("=" * 60)
-            print("Dataset Metadata")
+            print("Dataset Metadata Generated")
             print("=" * 60)
 
             for key, value in metadata.items():
@@ -86,16 +70,20 @@ if __name__ == "__main__":
 
     metadata = DatasetMetadata(
 
-        dataset_name="Sample Dataset",
+        dataset_name="Raphtaliya Sample",
+
         source="Local",
-        file_path="sample.csv",
-        language="English",
-        version="1.0",
-        description="Demo dataset",
-        author="Raphtaliya",
-        license="MIT",
-        tags=["demo", "csv"]
+
+        schema="qa",
+
+        languages=["english"],
+
+        domains=["programming"],
+
+        file_name="sample.csv"
 
     )
 
-    metadata.generate()
+    result = metadata.generate()
+
+    print(result)
