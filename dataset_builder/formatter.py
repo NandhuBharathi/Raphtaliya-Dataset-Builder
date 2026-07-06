@@ -46,6 +46,9 @@ class DatasetFormatter:
             elif self.schema == "translation":
 
                 records = self._format_translation()
+            elif self.schema == "chatml":
+
+                records = self._format_chatml()
 
             else:
 
@@ -252,6 +255,31 @@ class DatasetFormatter:
             })
 
         return records
+# ==========================================================
+# ChatML
+# ==========================================================
+
+def _format_chatml(self):
+
+    import ast
+
+    records = []
+
+    for _, row in self.dataset.iterrows():
+
+        messages = row["messages"]
+
+        if isinstance(messages, str):
+
+            messages = ast.literal_eval(messages)
+
+        records.append({
+
+            "messages": messages
+
+        })
+
+    return records
 
 
 if __name__ == "__main__":
