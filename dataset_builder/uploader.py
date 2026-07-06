@@ -1,6 +1,4 @@
-
 from pathlib import Path
-import shutil
 
 from huggingface_hub import HfApi
 from kaggle_secrets import UserSecretsClient
@@ -92,7 +90,8 @@ class DatasetUploader:
             print("Dataset Uploaded Successfully")
             print("=" * 60)
             print(f"Repository : {repo_id}")
-            print(f"Folder     : {folder}")
+            print(f"Files Uploaded :{len(json_files)}")
+            print(f"Folder         : {folder}")
             print("=" * 60)
 
             return repo_id
