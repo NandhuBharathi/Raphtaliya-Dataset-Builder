@@ -1,14 +1,22 @@
 
 from pathlib import Path
+import os
 
 from huggingface_hub import HfApi
 
 
 class DatasetUploader:
 
-    def __init__(self, token):
+    def __init__(self, token=None):
 
-        self.token = token
+        self.token = token or os.getenv("HF_TOKEN")
+
+        if not self.token:
+
+            raise ValueError(
+                "HF_TOKEN not found. Set it as an environment variable or pass it to DatasetUploader()."
+            )
+
         self.api = HfApi()
 
     def upload(
@@ -24,15 +32,15 @@ class DatasetUploader:
 
             if not folder_path.exists():
 
-                raise FileNotFoundError(folder_path)
+                raise FileNotFoundError(
+                    f"Folder not found: {folder_path}"
+                )
 
             username = self.api.whoami(
                 token=self.token
             )["name"]
 
-            repo_id = (
-                f"{username}/{dataset_name}"
-            )
+            repo_id = f"{username}/{dataset_name}"
 
             self.api.create_repo(
 
@@ -58,7 +66,7 @@ class DatasetUploader:
 
                 token=self.token,
 
-                commit_message="Upload dataset"
+                commit_message="Upload processed dataset"
 
             )
 
@@ -84,15 +92,11 @@ class DatasetUploader:
 
 if __name__ == "__main__":
 
-    HF_TOKEN = "YOUR_HF_TOKEN"
-
-    uploader = DatasetUploader(
-        HF_TOKEN
-    )
+    uploader = DatasetUploader()
 
     uploader.upload(
 
-        dataset_name="Raphtaliya-Training-Datasets",
+        dataset_name="Raphtaliya-Dataset-Test",
 
         folder_path="processed",
 
