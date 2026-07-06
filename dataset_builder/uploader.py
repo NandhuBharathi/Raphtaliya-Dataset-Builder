@@ -1,9 +1,10 @@
 
 from pathlib import Path
+import shutil
 
 from huggingface_hub import HfApi
 from kaggle_secrets import UserSecretsClient
-
+from datetime import datetime
 
 class DatasetUploader:
 
@@ -31,6 +32,16 @@ class DatasetUploader:
                 raise FileNotFoundError(
                     f"{folder_path} not found."
                 )
+            json_files = list(folder.glob("*.json"))
+
+            if not json_files:
+
+                print("=" * 60)
+                print("No Dataset Found")
+                print("=" * 60)
+                print("Nothing to upload.")
+                print("=" * 60)
+                return None
 
             username = self.api.whoami(
                 token=self.token
@@ -51,7 +62,15 @@ class DatasetUploader:
                 exist_ok=True
 
             )
-
+            print("=" * 60)
+            print("Repository Ready")
+            print("=" * 60)
+            print(f"Repository : {repo_id}")
+            print("=" * 60)
+            commit_message = (
+               f"Dataset Upload - "
+               f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+)
             self.api.upload_folder(
 
                 repo_id=repo_id,
@@ -62,10 +81,13 @@ class DatasetUploader:
 
                 token=self.token,
 
-                commit_message="Upload processed dataset"
+                commit_message=commit_message
 
             )
+            for file in folder.glob("*"):
 
+                if file.is_file():
+                   file.unlink()
             print("=" * 60)
             print("Dataset Uploaded Successfully")
             print("=" * 60)
