@@ -1,23 +1,19 @@
 
 from pathlib import Path
-import os
 
 from huggingface_hub import HfApi
+from kaggle_secrets import UserSecretsClient
 
 
 class DatasetUploader:
 
-    def __init__(self, token=None):
-
-        self.token = token or os.getenv("HF_TOKEN")
-
-        if not self.token:
-
-            raise ValueError(
-                "HF_TOKEN not found. Set it as an environment variable or pass it to DatasetUploader()."
-            )
+    def __init__(self):
 
         self.api = HfApi()
+
+        secrets = UserSecretsClient()
+
+        self.token = secrets.get_secret("HF_TOKEN")
 
     def upload(
         self,
@@ -28,12 +24,12 @@ class DatasetUploader:
 
         try:
 
-            folder_path = Path(folder_path)
+            folder = Path(folder_path)
 
-            if not folder_path.exists():
+            if not folder.exists():
 
                 raise FileNotFoundError(
-                    f"Folder not found: {folder_path}"
+                    f"{folder_path} not found."
                 )
 
             username = self.api.whoami(
@@ -62,7 +58,7 @@ class DatasetUploader:
 
                 repo_type="dataset",
 
-                folder_path=str(folder_path),
+                folder_path=str(folder),
 
                 token=self.token,
 
@@ -74,7 +70,7 @@ class DatasetUploader:
             print("Dataset Uploaded Successfully")
             print("=" * 60)
             print(f"Repository : {repo_id}")
-            print(f"Folder     : {folder_path}")
+            print(f"Folder     : {folder}")
             print("=" * 60)
 
             return repo_id
@@ -95,11 +91,5 @@ if __name__ == "__main__":
     uploader = DatasetUploader()
 
     uploader.upload(
-
-        dataset_name="Raphtaliya-Dataset-Test",
-
-        folder_path="processed",
-
-        private=False
-
+        dataset_name="Raphtaliya-Training-Datasets"
     )
