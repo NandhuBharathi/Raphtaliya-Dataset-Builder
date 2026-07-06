@@ -1,4 +1,3 @@
-
 import json
 from pathlib import Path
 
@@ -8,15 +7,21 @@ class DatasetSaver:
     def __init__(
         self,
         dataset,
+        file_path,
         metadata=None,
         statistics=None
     ):
 
         self.dataset = dataset
+        self.file_path = Path(file_path)
+
         self.metadata = metadata
         self.statistics = statistics
 
-    def save(self, output_dir="processed"):
+    def save(
+        self,
+        output_dir="processed"
+    ):
 
         try:
 
@@ -27,14 +32,20 @@ class DatasetSaver:
                 exist_ok=True
             )
 
-            # ----------------------------
-            # Train Dataset
-            # ----------------------------
+            # ----------------------------------
+            # Dataset File
+            # ----------------------------------
 
-            train_file = output_dir / "train.json"
+            dataset_name = (
+                self.file_path.stem + ".json"
+            )
+
+            dataset_file = (
+                output_dir / dataset_name
+            )
 
             with open(
-                train_file,
+                dataset_file,
                 "w",
                 encoding="utf-8"
             ) as file:
@@ -51,9 +62,9 @@ class DatasetSaver:
 
                 )
 
-            # ----------------------------
+            # ----------------------------------
             # Metadata
-            # ----------------------------
+            # ----------------------------------
 
             if self.metadata is not None:
 
@@ -83,9 +94,9 @@ class DatasetSaver:
 
                     )
 
-            # ----------------------------
+            # ----------------------------------
             # Statistics
-            # ----------------------------
+            # ----------------------------------
 
             if self.statistics is not None:
 
@@ -119,6 +130,7 @@ class DatasetSaver:
             print("Dataset Saved Successfully")
             print("=" * 60)
             print(f"Directory : {output_dir}")
+            print(f"Dataset   : {dataset_name}")
             print("=" * 60)
 
             return output_dir
@@ -166,21 +178,7 @@ if __name__ == "__main__":
 
     metadata = {
 
-        "schema": "conversation",
-
-        "languages": [
-
-            "english",
-
-            "tamil"
-
-        ],
-
-        "domains": [
-
-            "general"
-
-        ]
+        "schema": "conversation"
 
     }
 
@@ -192,11 +190,13 @@ if __name__ == "__main__":
 
     saver = DatasetSaver(
 
-        dataset,
+        dataset=dataset,
 
-        metadata,
+        file_path="sample.csv",
 
-        statistics
+        metadata=metadata,
+
+        statistics=statistics
 
     )
 
