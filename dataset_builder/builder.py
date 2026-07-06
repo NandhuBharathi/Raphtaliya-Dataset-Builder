@@ -145,6 +145,8 @@ class DatasetBuilder:
 
                 dataset=formatted_dataset,
 
+                file_path=self.file_path,
+
                 metadata=metadata,
 
                 statistics=statistics
