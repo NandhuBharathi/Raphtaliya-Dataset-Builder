@@ -113,9 +113,11 @@ class DatasetFormatter:
 
             prompt = str(row["instruction"])
 
-            if str(row["input"]).strip():
+            if "input" in self.dataset.columns:
 
-                prompt += "\n" + str(row["input"])
+                if str(row["input"]).strip():
+
+                    prompt += "\n" + str(row["input"])
 
             records.append({
 
@@ -153,9 +155,43 @@ class DatasetFormatter:
 
     def _format_document(self):
 
-    records = []
+        if isinstance(self.dataset, str):
 
-    if "content" in self.dataset.columns:
+            return [
+
+                {
+
+                    "messages": [
+
+                        {
+
+                            "role": "document",
+
+                            "content": self.dataset
+
+                        }
+
+                    ]
+
+                }
+
+            ]
+
+        records = []
+
+        if "content" in self.dataset.columns:
+
+            column = "content"
+
+        elif "text" in self.dataset.columns:
+
+            column = "text"
+
+        else:
+
+            raise ValueError(
+                "Document dataset must contain 'content' or 'text' column."
+            )
 
         for _, row in self.dataset.iterrows():
 
@@ -165,39 +201,14 @@ class DatasetFormatter:
 
                     {
                         "role": "document",
-                        "content":
-str(row["content"])
+                        "content": str(row[column])
                     }
 
                 ]
 
             })
 
-    elif "text" in self.dataset.columns:
-
-        for _, row in self.dataset.iterrows():
-
-            records.append({
-
-                "messages": [
-
-                    {
-                        "role": "document",
-                        "content": str(row["text"])
-                    }
-
-                ]
-
-            })
-
-    else:
-
-        raise ValueError(
-            "Document dataset must contain either 'content' or 'text' column."
-        )
-
-    return records
-            
+        return records
 
     # ==========================================================
     # Dictionary
@@ -258,11 +269,8 @@ if __name__ == "__main__":
     })
 
     formatter = DatasetFormatter(
-
         dataframe,
-
         "document"
-
     )
 
     dataset = formatter.format()
