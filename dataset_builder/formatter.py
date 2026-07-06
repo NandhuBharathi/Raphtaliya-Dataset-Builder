@@ -39,6 +39,14 @@ class DatasetFormatter:
 
                 records = self._format_document()
 
+            elif self.schema == "dictionary":
+
+                records = self._format_dictionary()
+
+            elif self.schema == "translation":
+
+                records = self._format_translation()
+
             else:
 
                 raise ValueError(
@@ -63,9 +71,9 @@ class DatasetFormatter:
 
             return None
 
-    # ----------------------------
+    # ==========================================================
     # QA
-    # ----------------------------
+    # ==========================================================
 
     def _format_qa(self):
 
@@ -93,9 +101,9 @@ class DatasetFormatter:
 
         return records
 
-    # ----------------------------
+    # ==========================================================
     # Alpaca
-    # ----------------------------
+    # ==========================================================
 
     def _format_alpaca(self):
 
@@ -129,9 +137,9 @@ class DatasetFormatter:
 
         return records
 
-    # ----------------------------
+    # ==========================================================
     # Table
-    # ----------------------------
+    # ==========================================================
 
     def _format_table(self):
 
@@ -139,47 +147,102 @@ class DatasetFormatter:
             orient="records"
         )
 
-    # ----------------------------
+    # ==========================================================
     # Document
-    # ----------------------------
+    # ==========================================================
 
     def _format_document(self):
 
-        return [
+        records = []
 
-            {
+        column = self.dataset.columns[0]
+
+        for _, row in self.dataset.iterrows():
+
+            text = str(row[column]).strip()
+
+            if not text:
+                continue
+
+            records.append({
 
                 "messages": [
 
                     {
                         "role": "document",
-                        "content": self.dataset
+                        "content": text
                     }
 
                 ]
 
-            }
+            })
 
-        ]
+        return records
+
+    # ==========================================================
+    # Dictionary
+    # ==========================================================
+
+    def _format_dictionary(self):
+
+        return self.dataset.to_dict(
+            orient="records"
+        )
+
+    # ==========================================================
+    # Translation
+    # ==========================================================
+
+    def _format_translation(self):
+
+        records = []
+
+        source_column = self.dataset.columns[0]
+        target_column = self.dataset.columns[1]
+
+        for _, row in self.dataset.iterrows():
+
+            records.append({
+
+                "messages": [
+
+                    {
+                        "role": "user",
+                        "content": str(row[source_column])
+                    },
+
+                    {
+                        "role": "assistant",
+                        "content": str(row[target_column])
+                    }
+
+                ]
+
+            })
+
+        return records
 
 
 if __name__ == "__main__":
 
     dataframe = pd.DataFrame({
 
-        "question": [
-            "What is AI?"
-        ],
+        "text": [
 
-        "answer": [
-            "Artificial Intelligence"
+            "Hello World",
+
+            "Raphtaliya AI"
+
         ]
 
     })
 
     formatter = DatasetFormatter(
+
         dataframe,
-        "qa"
+
+        "document"
+
     )
 
     dataset = formatter.format()

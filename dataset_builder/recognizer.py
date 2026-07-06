@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 
@@ -31,6 +30,30 @@ class DatasetRecognizer:
         }
 
     }
+
+    DICTIONARY_KEYS = [
+        {"word", "definition"},
+        {"word", "meaning"},
+        {"word", "gloss"},
+        {"word", "senses"}
+    ]
+
+    DOCUMENT_KEYS = [
+        {"text"},
+        {"content"},
+        {"document"},
+        {"article"},
+        {"body"}
+    ]
+
+    TRANSLATION_KEYS = [
+        {"en", "ta"},
+        {"english", "tamil"},
+        {"source", "target"},
+        {"src", "tgt"},
+        {"input", "target"},
+        {"translation", "target"}
+    ]
 
     def __init__(self, dataset):
 
@@ -75,19 +98,15 @@ class DatasetRecognizer:
         if isinstance(self.dataset, pd.DataFrame):
 
             keys = {
-                column.lower()
+                column.lower().strip()
                 for column in self.dataset.columns
             }
 
-            return self._match(
-                keys,
-                default="table"
-            )
+            return self._detect(keys, "table")
 
         elif isinstance(self.dataset, list):
 
             if len(self.dataset) == 0:
-
                 return "empty_list"
 
             first = self.dataset[0]
@@ -95,28 +114,22 @@ class DatasetRecognizer:
             if isinstance(first, dict):
 
                 keys = {
-                    key.lower()
+                    key.lower().strip()
                     for key in first.keys()
                 }
 
-                return self._match(
-                    keys,
-                    default="list"
-                )
+                return self._detect(keys, "list")
 
             return "list"
 
         elif isinstance(self.dataset, dict):
 
             keys = {
-                key.lower()
+                key.lower().strip()
                 for key in self.dataset.keys()
             }
 
-            return self._match(
-                keys,
-                default="dictionary"
-            )
+            return self._detect(keys, "dictionary")
 
         elif isinstance(self.dataset, str):
 
@@ -124,16 +137,32 @@ class DatasetRecognizer:
 
         return "unknown"
 
-    def _match(
-        self,
-        keys,
-        default
-    ):
+    def _detect(self, keys, default):
+
+        schema = self._match(keys)
+
+        if schema:
+            return schema
+
+        for required in self.DICTIONARY_KEYS:
+            if required.issubset(keys):
+                return "dictionary"
+
+        for required in self.DOCUMENT_KEYS:
+            if required.issubset(keys):
+                return "document"
+
+        for required in self.TRANSLATION_KEYS:
+            if required.issubset(keys):
+                return "translation"
+
+        return default
+
+    def _match(self, keys):
 
         for schema, required_keys in self.SCHEMAS.items():
 
             if required_keys.issubset(keys):
-
                 return schema
 
-        return default
+        return None
