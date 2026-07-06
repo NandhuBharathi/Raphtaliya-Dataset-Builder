@@ -14,8 +14,6 @@ class DatasetBuilder:
     def __init__(
         self,
         file_path,
-        dataset_name="Dataset",
-        source="Local"
     ):
 
         self.file_path = file_path
@@ -152,11 +150,7 @@ if __name__ == "__main__":
 
     builder = DatasetBuilder(
 
-        file_path="sample.csv",
-
-        dataset_name="Sample Dataset",
-
-        source="Local"
+        file_path="sample.csv"
 
     )
 
