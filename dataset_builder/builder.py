@@ -17,8 +17,6 @@ class DatasetBuilder:
     ):
 
         self.file_path = file_path
-        self.dataset_name = dataset_name
-        self.source = source
 
     def build(self):
 
@@ -64,7 +62,7 @@ class DatasetBuilder:
                 dataset
             )
 
-            languages = language_classifier.classify()
+            language_classifier.classify()
 
             # ==========================================================
             # Domain Classifier
@@ -74,7 +72,7 @@ class DatasetBuilder:
                 dataset
             )
 
-            domains = domain_classifier.classify()
+            domain_classifier.classify()
 
             # ==========================================================
             # Formatter
@@ -104,7 +102,8 @@ class DatasetBuilder:
                 print("=" * 60)
 
                 return None
- ==========================================================
+
+            # ==========================================================
             # Saver
             # ==========================================================
 

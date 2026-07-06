@@ -1,10 +1,38 @@
 [
     {
-        "id": 1,
-        "text": "Raphtaliya"
+        "messages": [
+            {
+                "role": "user",
+                "content": "What is AI?"
+            },
+            {
+                "role": "assistant",
+                "content": "Artificial Intelligence"
+            }
+        ]
     },
     {
-        "id": 2,
-        "text": "Dataset Builder"
+        "messages": [
+            {
+                "role": "user",
+                "content": "What is Python?"
+            },
+            {
+                "role": "assistant",
+                "content": "Programming Language"
+            }
+        ]
+    },
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "What is ML?"
+            },
+            {
+                "role": "assistant",
+                "content": "Machine Learning"
+            }
+        ]
     }
 ]
