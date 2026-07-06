@@ -58,7 +58,7 @@ class DatasetBuilder:
                 dataset
             )
 
-            schema = recognizer.recognize()
+            schema = recognizer.classify()
 
             # ==========================================================
             # Language Classifier
