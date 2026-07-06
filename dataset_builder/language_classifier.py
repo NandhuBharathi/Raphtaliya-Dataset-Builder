@@ -56,7 +56,37 @@ class LanguageClassifier:
 
         try:
 
-            return self.dataset.astype(str).to_string()
+            if hasattr(self.dataset, "columns"):
+
+                if "content" in self.dataset.columns:
+
+                    return " ".join(
+
+                        self.dataset["content"]
+
+                        .fillna("")
+
+                        .astype(str)
+
+                        .head(100)
+
+                    )
+
+                elif "text" in self.dataset.columns:
+
+                    return " ".join(
+
+                        self.dataset["text"]
+
+                        .fillna("")
+
+                        .astype(str)
+
+                        .head(100)
+
+                    )
+
+            return str(self.dataset.head(100))
 
         except Exception:
 
@@ -101,9 +131,7 @@ if __name__ == "__main__":
 
     """
 
-    classifier = LanguageClassifier(
-        sample
-    )
+    classifier = LanguageClassifier(sample)
 
     result = classifier.classify()
 

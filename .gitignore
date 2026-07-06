@@ -39,3 +39,35 @@ github_datasets/
 
 .DS_Store
 Thumbs.db
+
+# Runtime Database
+state.db
+*.db
+
+# Processed Datasets
+processed/
+
+# CSV Files
+*.csv
+
+# Hugging Face Cache
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Runtime Database
+state.db
+*.db
+
+# Processed Datasets
+processed/
+
+# CSV Files
+*.csv
+
+# Hugging Face Cache
+.cache/
+
+# Jupyter
+.ipynb_checkpoints/
