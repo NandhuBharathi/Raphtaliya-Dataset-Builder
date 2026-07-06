@@ -85,7 +85,8 @@ class DatasetBuilder:
             # ==========================================================
 
             formatter = DatasetFormatter(
-                dataset
+                dataset,
+                schema
             )
 
             formatted_dataset = formatter.format()

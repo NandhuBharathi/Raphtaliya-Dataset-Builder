@@ -1,0 +1,14 @@
+{
+    "rows": 3,
+    "columns": 2,
+    "numeric_columns": [],
+    "text_columns": [
+        "question",
+        "answer"
+    ],
+    "missing_values": {
+        "question": 0,
+        "answer": 0
+    },
+    "duplicate_rows": 0
+}
