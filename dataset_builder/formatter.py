@@ -153,16 +153,11 @@ class DatasetFormatter:
 
     def _format_document(self):
 
-        records = []
+    records = []
 
-        column = self.dataset.columns[0]
+    if "content" in self.dataset.columns:
 
         for _, row in self.dataset.iterrows():
-
-            text = str(row[column]).strip()
-
-            if not text:
-                continue
 
             records.append({
 
@@ -170,14 +165,39 @@ class DatasetFormatter:
 
                     {
                         "role": "document",
-                        "content": text
+                        "content":
+str(row["content"])
                     }
 
                 ]
 
             })
 
-        return records
+    elif "text" in self.dataset.columns:
+
+        for _, row in self.dataset.iterrows():
+
+            records.append({
+
+                "messages": [
+
+                    {
+                        "role": "document",
+                        "content": str(row["text"])
+                    }
+
+                ]
+
+            })
+
+    else:
+
+        raise ValueError(
+            "Document dataset must contain either 'content' or 'text' column."
+        )
+
+    return records
+            
 
     # ==========================================================
     # Dictionary
