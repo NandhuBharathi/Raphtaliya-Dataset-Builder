@@ -8,15 +8,11 @@ class DatasetSaver:
         self,
         dataset,
         file_path,
-        metadata=None,
-        statistics=None
     ):
 
         self.dataset = dataset
         self.file_path = Path(file_path)
 
-        self.metadata = metadata
-        self.statistics = statistics
 
     def save(
         self,
@@ -62,69 +58,6 @@ class DatasetSaver:
 
                 )
 
-            # ----------------------------------
-            # Metadata
-            # ----------------------------------
-
-            if self.metadata is not None:
-
-                metadata_file = (
-                    output_dir / "metadata.json"
-                )
-
-                with open(
-
-                    metadata_file,
-
-                    "w",
-
-                    encoding="utf-8"
-
-                ) as file:
-
-                    json.dump(
-
-                        self.metadata,
-
-                        file,
-
-                        indent=4,
-
-                        ensure_ascii=False
-
-                    )
-
-            # ----------------------------------
-            # Statistics
-            # ----------------------------------
-
-            if self.statistics is not None:
-
-                statistics_file = (
-                    output_dir / "statistics.json"
-                )
-
-                with open(
-
-                    statistics_file,
-
-                    "w",
-
-                    encoding="utf-8"
-
-                ) as file:
-
-                    json.dump(
-
-                        self.statistics,
-
-                        file,
-
-                        indent=4,
-
-                        ensure_ascii=False
-
-                    )
 
             print("=" * 60)
             print("Dataset Saved Successfully")
@@ -176,27 +109,11 @@ if __name__ == "__main__":
 
     ]
 
-    metadata = {
-
-        "schema": "conversation"
-
-    }
-
-    statistics = {
-
-        "records": 1
-
-    }
-
     saver = DatasetSaver(
 
         dataset=dataset,
 
-        file_path="sample.csv",
-
-        metadata=metadata,
-
-        statistics=statistics
+        file_path="sample.csv"
 
     )
 

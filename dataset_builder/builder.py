@@ -6,8 +6,6 @@ from dataset_builder.language_classifier import LanguageClassifier
 from dataset_builder.domain_classifier import DomainClassifier
 from dataset_builder.formatter import DatasetFormatter
 from dataset_builder.validator import DatasetValidator
-from dataset_builder.statistics import DatasetStatistics
-from dataset_builder.metadata import DatasetMetadata
 from dataset_builder.saver import DatasetSaver
 
 
@@ -121,21 +119,7 @@ class DatasetBuilder:
             # Metadata
             # ==========================================================
 
-            metadata = DatasetMetadata(
-
-                dataset_name=self.dataset_name,
-
-                source=self.source,
-
-                schema=schema,
-
-                languages=languages["languages"],
-
-                domains=domains["domains"],
-
-                file_name=self.file_path
-
-            ).generate()
+            
 
             # ==========================================================
             # Saver
@@ -147,9 +131,7 @@ class DatasetBuilder:
 
                 file_path=self.file_path,
 
-                metadata=metadata,
 
-                statistics=statistics
 
             )
 
@@ -167,9 +149,7 @@ class DatasetBuilder:
 
                 "dataset": formatted_dataset,
 
-                "metadata": metadata,
 
-                "statistics": statistics,
 
                 "output": output_path
 
