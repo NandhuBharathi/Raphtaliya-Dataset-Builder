@@ -7,16 +7,14 @@ from dataset_builder.domain_classifier import DomainClassifier
 from dataset_builder.formatter import DatasetFormatter
 from dataset_builder.validator import DatasetValidator
 from dataset_builder.saver import DatasetSaver
+from datasets import Dataset, DatasetDict
+import pandas as pd
 
 
 class DatasetBuilder:
 
-    def __init__(
-        self,
-        file_path,
-    ):
-
-        self.file_path = file_path
+    def __init__(self, source):
+        self.source = source
 
     def build(self):
 
@@ -26,13 +24,30 @@ class DatasetBuilder:
             # Reader
             # ==========================================================
 
-            factory = ReaderFactory(
-                self.file_path
-            )
-
-            reader = factory.get_reader()
-
-            dataset = reader.read()
+            if isinstance(self.source, Dataset):
+                dataset=self.source.to_pandas()
+                print("="*60)
+                print("Hugging Face Dataset Loaded Successfully")
+                print("="*60)
+                print(f"Rows    : {len(dataset)}")
+                print(f"Columns : {len(dataset.columns)}")
+                print("="*60)
+            elif isinstance(self.source, DatasetDict):
+                raise ValueError("Please pass a dataset split. Example: dataset['train']")
+            elif isinstance(self.source, pd.DataFrame):
+                dataset=self.source
+                print("="*60)
+                print("Pandas DataFrame Loaded Successfully")
+                print("="*60)
+                print(f"Rows    : {len(dataset)}")
+                print(f"Columns : {len(dataset.columns)}")
+                print("="*60)
+            elif isinstance(self.source, str):
+                factory=ReaderFactory(self.source)
+                reader=factory.get_reader()
+                dataset=reader.read()
+            else:
+                raise TypeError(f"Unsupported input type : {type(self.source).__name__}")
 
             # ==========================================================
             # Inspector
@@ -111,7 +126,7 @@ class DatasetBuilder:
 
                 dataset=formatted_dataset,
 
-                file_path=self.file_path,
+                file_path=self.source if isinstance(self.source, str) else "dataset",
             )
 
             output_path = saver.save()
@@ -147,11 +162,7 @@ class DatasetBuilder:
 
 if __name__ == "__main__":
 
-    builder = DatasetBuilder(
-
-        file_path="sample.csv"
-
-    )
+    builder = DatasetBuilder("sample.csv")
 
     result = builder.build()
 
